@@ -11,13 +11,18 @@ services:
       - 8000:8000
     depends_on:
       - db
-    environment: &api-environment
+    environment: 
       DJANGO_ENV: dev
       DJANGO_SECRET_KEY: secret_key
+      DATABASE_NAME: postgres
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
     command: python manage.py runserver 0.0.0.0:8000
 
   db:
-    image: postgres:11.4
+    image: postgres:12.0-alpine
     ports:
       - 5432:5432
     environment:
