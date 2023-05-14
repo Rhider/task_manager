@@ -22,7 +22,11 @@ class Task(models.Model):
     description = models.TextField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    deadline = models.DateTimeField(null=True)
+    deadline = models.DateTimeField(null=True, blank=True)
     state = models.CharField(max_length=255, default=State.NEW, choices=State.choices)
-    priority = models.PositiveIntegerField()
-    tags = models.ManyToManyField(Tag)
+    priority = models.PositiveIntegerField(blank=True, null=True)
+    tags = models.ManyToManyField(Tag, blank=True)
+
+    def __str__(self):
+        return self.name
+    
