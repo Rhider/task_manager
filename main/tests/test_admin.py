@@ -15,7 +15,9 @@ class TestAdmin(APITestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         super().setUpTestData()
-        cls.admin = User.objects.create_superuser("test@test.ru", email=None, password=None)
+        cls.admin = User.objects.create_superuser(
+            "test@test.ru", email=None, password=None
+        )
         cls.client = APIClient()
         cls.client.force_login(cls.admin)
 
@@ -34,19 +36,19 @@ class TestAdmin(APITestCase):
             url = reverse(f"admin:{app_label}_{model_name}_{action}", args=args)
             response = cls.client.get(url)
             assert response.status_code == HTTPStatus.OK, response.content
-    
+
     def test_user(self) -> None:
         self.assert_forms(User, self.admin.id)
-    
+
     def test_tag(self) -> None:
-        tag = Tag.objects.create(name='Top-level')
+        tag = Tag.objects.create(name="Top-level")
         self.assert_forms(Tag, tag.id)
 
     def test_task(self) -> None:
         task = Task.objects.create(
-            name='Test',
-            description='Some description',
+            name="Test",
+            description="Some description",
             author=self.admin,
-            executor=self.admin
+            executor=self.admin,
         )
         self.assert_forms(Task, task.id)

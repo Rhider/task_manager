@@ -22,4 +22,12 @@ class TaskAdmin(admin.ModelAdmin):
 
 @admin.register(User, site=task_manager_admin_site)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'username', 'role', 'email', 'first_name', 'last_name', 'is_staff')
+    list_display = (
+        "id",
+        "username",
+        "role",
+        "email",
+        "first_name",
+        "last_name",
+        "is_staff",
+    )
