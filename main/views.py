@@ -6,14 +6,14 @@ from .serializers import TagSerializer, TaskSerializer, UserSerializer
 
 class DeleteAdminOnly(permissions.BasePermission):
     def has_permission(self, request, view):
-        if request.method == 'DELETE':
+        if request.method == "DELETE":
             return bool(request.user and request.user.is_staff)
         return bool(request.user and request.user.is_authenticated)
-    
+
     def has_object_permission(self, request, view, obj):
-        if request.method == 'DELETE':
+        if request.method == "DELETE":
             return bool(request.user and request.user.is_staff)
-        return bool(request.user and request.user.is_authenticated)    
+        return bool(request.user and request.user.is_authenticated)
 
 
 class UserFilter(django_filters.FilterSet):
