@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0003_tag_task'),
+        ("main", "0003_tag_task"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='task',
-            name='deadline',
+            model_name="task",
+            name="deadline",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='task',
-            name='priority',
+            model_name="task",
+            name="priority",
             field=models.PositiveIntegerField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='task',
-            name='tags',
-            field=models.ManyToManyField(blank=True, to='main.tag'),
+            model_name="task",
+            name="tags",
+            field=models.ManyToManyField(blank=True, to="main.tag"),
         ),
     ]
