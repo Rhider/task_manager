@@ -1,19 +1,15 @@
 import django_filters
 from rest_framework import permissions, viewsets
+from rest_framework.permissions import IsAuthenticated
 from .models import Tag, Task, User
 from .serializers import TagSerializer, TaskSerializer, UserSerializer
 
 
 class DeleteAdminOnly(permissions.BasePermission):
     def has_permission(self, request, view):
-        if request.method == 'DELETE':
+        if request.method == "DELETE":
             return bool(request.user and request.user.is_staff)
-        return bool(request.user and request.user.is_authenticated)
-    
-    def has_object_permission(self, request, view, obj):
-        if request.method == 'DELETE':
-            return bool(request.user and request.user.is_staff)
-        return bool(request.user and request.user.is_authenticated)    
+        return True
 
 
 class UserFilter(django_filters.FilterSet):
@@ -33,7 +29,10 @@ class UserViewSet(viewsets.ModelViewSet):
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.order_by("id")
     serializer_class = TagSerializer
-    permission_classes = (DeleteAdminOnly,)
+    permission_classes = (
+        DeleteAdminOnly,
+        IsAuthenticated,
+    )
 
 
 class TaskFilter(django_filters.FilterSet):
@@ -61,4 +60,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     )
     serializer_class = TaskSerializer
     filterset_class = TaskFilter
-    permission_classes = (DeleteAdminOnly,)
+    permission_classes = (
+        DeleteAdminOnly,
+        IsAuthenticated,
+    )
