@@ -1,26 +1,27 @@
 from http import HTTPStatus
 
 from django.urls import reverse
-from rest_framework.test import APIClient, APITestCase
 
-from main.models import Tag, User
+from main.models import Tag
+from .base import TestViewSetBase
 
 
-class TestTag(APITestCase):
-    base_name = "tags"
-    client: APIClient
+class TestTagViewSet(TestViewSetBase):
+    basename = "tags"
     tag: Tag
-    user: User
+    tag_attributes = {"name": "test tag"}
 
-    @classmethod
-    def setUpTestData(cls) -> None:
-        super().setUpTestData()
-        cls.user = User.objects.create_user("user@test.ru", email=None, password=None)
-        cls.client = APIClient()
-        cls.tag = Tag.objects.create(name="test tag")
+    @staticmethod
+    def expected_details(entity: dict, attributes: dict):
+        return {**attributes, "id": entity["id"]}
+
+    def test_create(self):
+        tag = self.create(self.tag_attributes)
+        expected_response = self.expected_details(tag, self.tag_attributes)
+        assert tag == expected_response
 
     def test_user_is_authenticated(self) -> None:
-        url = reverse(f"{self.base_name}-list")
+        url = reverse(f"{self.basename}-list")
         response = self.client.get(url)
 
         assert response.status_code == HTTPStatus.FORBIDDEN
@@ -30,7 +31,7 @@ class TestTag(APITestCase):
 
     def test_delete_is_allowed(self) -> None:
         self.client.force_login(self.user)
-        url = reverse(f"{self.base_name}-detail", args=[1])
+        url = reverse(f"{self.basename}-detail", args=[1])
         response = self.client.delete(url)
 
         assert response.status_code == HTTPStatus.FORBIDDEN
