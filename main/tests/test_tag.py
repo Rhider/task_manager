@@ -19,11 +19,7 @@ class TestTag(APITestCase):
         cls.client = APIClient()
         cls.tag = Tag.objects.create(name="test tag")
 
-    def test_permission(self) -> None:
-        self.assert_is_authenticated()
-        self.assert_delete_is_allowed()
-
-    def assert_is_authenticated(self) -> None:
+    def test_user_is_authenticated(self) -> None:
         url = reverse(f"{self.base_name}-list")
         response = self.client.get(url)
 
@@ -32,7 +28,7 @@ class TestTag(APITestCase):
             "detail": "Authentication credentials were not provided."
         }
 
-    def assert_delete_is_allowed(self) -> None:
+    def test_delete_is_allowed(self) -> None:
         self.client.force_login(self.user)
         url = reverse(f"{self.base_name}-detail", args=[1])
         response = self.client.delete(url)
