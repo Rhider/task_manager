@@ -23,9 +23,6 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    author = serializers.CharField(source="author.username")
-    executor = serializers.CharField(source="executor.username")
-
     class Meta:
         model = Task
         fields = (
