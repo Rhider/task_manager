@@ -1,5 +1,9 @@
 from django.urls import include, path, re_path
 from rest_framework import permissions, routers
+from rest_framework_simplejwt.views import (
+	TokenObtainPairView,
+	TokenRefreshView,
+)
 
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -28,6 +32,8 @@ router.register(r"tasks", TaskViewSet, basename="tasks")
 
 
 urlpatterns = [
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path(
         "swagger<format>/", schema_view.without_ui(cache_timeout=0), name="schema-json"
     ),
