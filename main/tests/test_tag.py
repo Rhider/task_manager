@@ -69,7 +69,7 @@ class TestTagViewSet(TestViewSetBase):
         
         response = self.client.get(url)
 
-        assert response.status_code == HTTPStatus.FORBIDDEN
+        assert response.status_code == HTTPStatus.UNAUTHORIZED
         assert response.json() == {
             "detail": "Authentication credentials were not provided."
         }
