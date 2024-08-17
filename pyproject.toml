@@ -6,7 +6,7 @@ description = ""
 authors = ["dbp"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<3.13"
 django = "^4.2"
 psycopg2-binary = "^2.9.6"
 djangorestframework = "^3.14.0"
@@ -15,6 +15,7 @@ django-filter = "^23.2"
 drf-yasg = "^1.21.7"
 freezegun = "^1.4.0"
 factory-boy = "^3.3.0"
+coveralls = "^4.0.1"
 
 [tool.poetry.dev-dependencies]
 
