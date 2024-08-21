@@ -816,6 +816,21 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
+name = "rollbar"
+version = "1.0.0"
+description = "Easy and powerful exception tracking with Rollbar. Send messages and exceptions with arbitrary context, get back aggregates, and debug production issues quickly."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "rollbar-1.0.0-py3-none-any.whl", hash = "sha256:b7831cd8f2d2384e5922cdfb18897890c4ac4609fddfd2a821efe17b92cf1e58"},
+    {file = "rollbar-1.0.0.tar.gz", hash = "sha256:6347b7e49f22f0296fc287a6aea75d642cf64494d2ee127042a7a593c97df3af"},
+]
+
+[package.dependencies]
+requests = ">=0.12.1"
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -913,4 +928,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.13"
-content-hash = "720696da26584b4f6e515a54ec3e67845b874501d72f53f7a15716c5abc9730d"
+content-hash = "48ae3531774c6de6dfe100e1ef1864dab7cf8062ec3dc49a550ec138a607ff94"
