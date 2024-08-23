@@ -18,6 +18,7 @@ factory-boy = "^3.3.0"
 coveralls = "^4.0.1"
 django-storages = "^1.14.4"
 boto3 = "^1.35.5"
+pillow = "^10.4.0"
 
 [tool.poetry.dev-dependencies]
 
