@@ -80,7 +80,7 @@ class TestTaskViewSet(TestViewSetBase):
         task1 = self.create_task()
         task2 = self.create_task({"name": "second task"})
         
-        self.delete(task1)
+        self.delete(task1["id"])
 
         self.assert_list_ids(expected=[task2])    
 

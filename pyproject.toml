@@ -16,6 +16,7 @@ drf-yasg = "^1.21.7"
 freezegun = "^1.4.0"
 factory-boy = "^3.3.0"
 coveralls = "^4.0.1"
+drf-extensions = "^0.7.1"
 
 [tool.poetry.dev-dependencies]
 

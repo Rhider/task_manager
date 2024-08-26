@@ -9,7 +9,15 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 from main.admin import task_manager_admin_site
-from main.views import TagViewSet, TaskViewSet, UserViewSet
+from main.views import (
+    TagViewSet,
+    TaskTagsViewSet,
+    TaskViewSet,
+    UserTasksViewSet,
+    UserViewSet,
+    CurrentUserViewSet,
+)
+from main.services.single_resource import BulkRouter
 
 
 schema_view = get_schema_view(
@@ -25,10 +33,23 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 
-router = routers.SimpleRouter()
-router.register(r"users", UserViewSet, basename="users")
+router = BulkRouter()
+users = router.register(r"users", UserViewSet, basename="users")
+users.register(
+    r"tasks",
+    UserTasksViewSet,
+    basename="user_tasks",
+    parents_query_lookups=["executor_id"],
+)
 router.register(r"tags", TagViewSet, basename="tags")
-router.register(r"tasks", TaskViewSet, basename="tasks")
+tasks = router.register(r"tasks", TaskViewSet, basename="tasks")
+tasks.register(
+    r"tags",
+    TaskTagsViewSet,
+    basename="task_tags",
+    parents_query_lookups=["task_id"],
+)
+router.register(r"current-user", CurrentUserViewSet, basename="current_user")
 
 
 urlpatterns = [
