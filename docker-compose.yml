@@ -25,7 +25,8 @@ services:
       EMAIL_HOST_USER: ${EMAIL_HOST_USER}
       EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
       EMAIL_PORT: 465
-    command: python manage.py runserver 0.0.0.0:8000
+      NEW_RELIC_CONFIG_FILE: newrelic.ini 
+    command: newrelic-admin run-program python manage.py runserver 0.0.0.0:8000
 
   db:
     image: postgres:12.0-alpine
@@ -34,3 +35,4 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+ 
