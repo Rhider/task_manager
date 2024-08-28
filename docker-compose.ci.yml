@@ -4,6 +4,12 @@ x-app-config: &app-config
   DJANGO_ENV: dev
   DJANGO_SECRET_KEY: secret_key
   COVERALLS_REPO_TOKEN: ${COVERALLS_REPO_TOKEN}
+  EMAIL_USE_SSL: 1
+  EMAIL_USE_TLS: 0
+  EMAIL_HOST: smtp.google.com
+  EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+  EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+  EMAIL_PORT: 465
 
 x-db-config: &db-config
   DATABASE_NAME: postgres
