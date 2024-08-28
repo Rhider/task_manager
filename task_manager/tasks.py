@@ -1,8 +1,9 @@
 from django.core import mail
+from django.forms import model_to_dict
 from django.template.loader import render_to_string
 
 from main.models import Task
-from celery import app
+from .celery import app
 
 
 @app.task
@@ -12,7 +13,7 @@ def send_assign_notification(task_id: int) -> None:
     send_html_email.delay(
         subject="You've assigned a task.",
         template="notification.html",
-        context={"task": task},
+        context={"task": model_to_dict(task)},
         recipients=[assignee.email],
     )
 
