@@ -73,7 +73,7 @@ class TestUserViewSet(TestViewSetBase):
         user1 = self.create_user()
         user2 = self.create_user()
         
-        self.delete(user1)
+        self.delete(user1["id"])
 
         self.assert_user_ids(expected=[user2]) 
 

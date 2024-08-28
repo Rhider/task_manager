@@ -1,6 +1,9 @@
+from typing import cast
 import django_filters
 from rest_framework import permissions, viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_extensions.mixins import NestedViewSetMixin
+from main.services.single_resource import SingleResourceMixin, SingleResourceUpdateMixin
 from .models import Tag, Task, User
 from .serializers import TagSerializer, TaskSerializer, UserSerializer
 
@@ -26,6 +29,25 @@ class UserViewSet(viewsets.ModelViewSet):
     filterset_class = UserFilter
 
 
+class CurrentUserViewSet(
+    SingleResourceMixin, SingleResourceUpdateMixin, viewsets.ModelViewSet
+):
+    serializer_class = UserSerializer
+    queryset = User.objects.order_by("id")
+
+    def get_object(self) -> User:
+        return cast(User, self.request.user)
+
+
+class UserTasksViewSet(NestedViewSetMixin, viewsets.ReadOnlyModelViewSet):
+    queryset = (
+        Task.objects.order_by("id")
+        .select_related("author", "executor")
+        .prefetch_related("tags")
+    )
+    serializer_class = TaskSerializer
+
+
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.order_by("id")
     serializer_class = TagSerializer
@@ -33,6 +55,14 @@ class TagViewSet(viewsets.ModelViewSet):
         DeleteAdminOnly,
         IsAuthenticated,
     )
+
+
+class TaskTagsViewSet(viewsets.ModelViewSet):
+    serializer_class = TagSerializer
+    
+    def get_queryset(self):
+        task_id = self.kwargs["parent_lookup_task_id"]
+        return Task.objects.get(pk=task_id).tags.all()
 
 
 class TaskFilter(django_filters.FilterSet):

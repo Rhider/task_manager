@@ -60,7 +60,7 @@ class TestTagViewSet(TestViewSetBase):
         tag1 = self.create_tag()
         tag2 = self.create_tag({"name": "second tag"})
         
-        self.delete(tag1)
+        self.delete(tag1["id"])
 
         self.assert_list_ids(expected=[tag2])        
 

@@ -6,9 +6,11 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from rest_framework.test import APIClient, APITestCase
 from rest_framework.response import Response
+
 from faker.providers import BaseProvider
 
-from main.models.user import User
+
+from main.models import User, Task, Tag
 
 
 CURRENT_TIME = "2023-06-24T12:00:00Z"
@@ -47,6 +49,14 @@ class TestViewSetBase(APITestCase):
         "email": "victor@test.com",
         "role": "admin"
     }
+    task_attributes = {
+        "name": "test task",
+        "description": "Some task description",
+        "created_at": "2023-06-24T12:00:00Z",
+        "updated_at": "2023-06-24T12:00:00Z",
+        "state": "new_task",
+    }
+    tag_attributes = {"name": "test tag"}
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -64,8 +74,25 @@ class TestViewSetBase(APITestCase):
         return User.objects.create_superuser(**self.admin_attributes)
 
     @classmethod
-    def detail_url(cls, key: Union[int, str]) -> str:
-        return reverse(f"{cls.basename}-detail", args=[key])
+    def create_task(cls, data: dict = None) -> dict:
+        task_attributes = merge({
+            **cls.task_attributes,
+            "author": cls.admin,
+            "executor": cls.admin,
+        }, data)
+        return Task.objects.create(**task_attributes)
+
+    @classmethod
+    def create_tag(cls, data: dict = None) -> dict:
+        tag_attributes = merge(cls.tag_attributes, data)
+        return Tag.objects.create(**tag_attributes)
+
+    @classmethod
+    def detail_url(cls, args: Union[int, str]) -> str:
+        if isinstance(args, list):
+            return reverse(f"{cls.basename}-detail", args=args)
+        else:
+            return reverse(f"{cls.basename}-detail", args=[args])
 
     @classmethod
     def list_url(cls, args: List[Union[str, int]] = None) -> str:
@@ -95,9 +122,12 @@ class TestViewSetBase(APITestCase):
         assert response.status_code == HTTPStatus.OK, response.content
         return response.data
 
-    def retrieve(self, args: Union[str, int]) -> dict:
+    def request_retrieve(self, args: Union[str, int]) -> Response:
         self.client.force_login(self.user)
-        response = self.client.get(self.detail_url(args))
+        return self.client.get(self.detail_url(args))
+
+    def retrieve(self, args: Union[str, int]) -> dict:
+        response = self.request_retrieve(args)
         assert response.status_code == HTTPStatus.OK, response.content
         return response.data
 
@@ -113,9 +143,9 @@ class TestViewSetBase(APITestCase):
         assert response.status_code == HTTPStatus.OK, response.content
         return response.data
 
-    def delete(self, args: dict = None) -> dict:
+    def delete(self, args: Union[int, list]  = None) -> dict:
         self.client.force_login(self.admin)
-        response = self.client.delete(self.detail_url(args["id"]))
+        response = self.client.delete(self.detail_url(args))
         assert response.status_code == HTTPStatus.NO_CONTENT
         return response.data
 
@@ -123,11 +153,34 @@ class TestViewSetBase(APITestCase):
     def ids(cls, items: List[dict]) -> List[int]:
         return [item["id"] for item in items]
 
-    def assert_list_ids(self, expected: List[dict], query: dict = None) -> None:
-        entities = self.list(query)
+    def assert_list_ids(
+        self,
+        expected: List[dict],
+        query: dict = None,
+        args: Union[str, int] = None
+    ) -> None:
+        entities = self.list(query, args)
         assert self.ids(entities) == self.ids(expected)
 
     def assert_user_ids(self, expected: List[dict], query: dict = None) -> None:
         entities = self.list(query)
         expected_ids = [self.user.id, self.admin.id] + self.ids(expected)
         assert self.ids(entities) == expected_ids
+
+    def request_single_resource(self, data: dict = None) -> Response:
+        self.client.force_login(self.user)
+        return self.client.get(self.list_url(), data=data)
+
+    def single_resource(self, data: dict = None) -> dict:
+        response = self.request_single_resource(data)
+        assert response.status_code == HTTPStatus.OK
+        return response.data
+
+    def request_patch_single_resource(self, attributes: dict) -> Response:
+        self.client.force_login(self.user)
+        return self.client.patch(self.list_url(), data=attributes)
+
+    def patch_single_resource(self, attributes: dict) -> dict:
+        response = self.request_patch_single_resource(attributes)
+        assert response.status_code == HTTPStatus.OK, response.content
+        return response.data
