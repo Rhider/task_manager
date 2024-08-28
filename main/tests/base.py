@@ -2,14 +2,26 @@ import copy
 from http import HTTPStatus
 from typing import List, Union
 
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from rest_framework.test import APIClient, APITestCase
 from rest_framework.response import Response
+
+from faker.providers import BaseProvider
+
 
 from main.models import User, Task, Tag
 
 
 CURRENT_TIME = "2023-06-24T12:00:00Z"
+
+
+class ImageFileProvider(BaseProvider):
+    def image_file(self, fmt: str = "jpeg") -> SimpleUploadedFile:
+        return SimpleUploadedFile(
+            self.generator.file_name(extension=fmt),
+            self.generator.image(image_format=fmt),
+        )
 
 
 def merge(base: dict, another_values: dict = None) -> dict:
@@ -91,6 +103,18 @@ class TestViewSetBase(APITestCase):
         response = self.client.post(self.list_url(args), data=data)
         assert response.status_code == HTTPStatus.CREATED, response.content
         return response.data
+
+    def request_create(
+        self,
+        data: dict,
+        args: List[Union[str, int]] = None,
+        format_type: str = None,
+    ) -> Response:
+        self.client.force_login(self.user)
+        return self.client.post(self.list_url(args), data=data)
+
+    def request_create_multipart(self, data: dict, args: List[Union[str, int]] = None) -> Response:
+        return self.request_create(data, args, format_type="multipart")
 
     def list(self, data: dict = None, args: List[Union[str, int]] = None) -> dict:
         self.client.force_login(self.user)
