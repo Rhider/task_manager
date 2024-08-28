@@ -24,6 +24,7 @@ pillow = "^10.4.0"
 drf-extensions = "^0.7.1"
 celery = "^5.4.0"
 redis = "^5.0.8"
+flower = "^2.0.1"
 
 [tool.poetry.dev-dependencies]
 
