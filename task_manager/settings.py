@@ -10,6 +10,8 @@ SECRET_KEY = "django-insecure-+g3q5jn=htlz3x#i4wmzv5&k+--16go9%7_noqq#v66_b=)^wy
 
 DEBUG = True
 
+DJANGO_ENV = os.environ["DJANGO_ENV"]
+
 ALLOWED_HOSTS = ("*",)
 
 INSTALLED_APPS = [
@@ -120,3 +122,18 @@ EMAIL_HOST_USER = os.environ["EMAIL_HOST_USER"]
 EMAIL_HOST_PASSWORD = os.environ["EMAIL_HOST_PASSWORD"]
 EMAIL_PORT = os.environ["EMAIL_PORT"]
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
+
+if DJANGO_ENV != "dev":
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    PUBLIC_FILE_STORAGE = "core.storage_backends.S3PublicStorage"
+    AWS_QUERYSTRING_EXPIRE = 10 * 60
+    AWS_QUERYSTRING_AUTH = True
+    AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
+    AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
+    AWS_STORAGE_BUCKET_NAME = os.environ["AWS_STORAGE_BUCKET_NAME"]
+    AWS_S3_REGION_NAME = os.environ["AWS_REGION_NAME"]
+    AWS_DEFAULT_ACL = "private"
+else:
+    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+    MEDIA_URL = "/media/"

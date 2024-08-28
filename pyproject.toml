@@ -18,6 +18,8 @@ factory-boy = "^3.3.0"
 coveralls = "^4.0.1"
 rollbar = "^1.0.0"
 newrelic = "^9.13.0"
+django-storages = "^1.14.4"
+boto3 = "^1.35.5"
 
 [tool.poetry.dev-dependencies]
 
