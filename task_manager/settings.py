@@ -2,6 +2,8 @@ import os
 
 from pathlib import Path
 
+from distutils.util import strtobool
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "django-insecure-+g3q5jn=htlz3x#i4wmzv5&k+--16go9%7_noqq#v66_b=)^wy"
@@ -110,3 +112,11 @@ ROLLBAR = {
     'code_version': '1.0',
     'root': BASE_DIR,
 }
+
+EMAIL_USE_SSL = strtobool(os.environ.get("EMAIL_USE_SSL", "0"))
+EMAIL_USE_TLS = strtobool(os.environ.get("EMAIL_USE_TLS", "0"))
+EMAIL_HOST = os.environ["EMAIL_HOST"]
+EMAIL_HOST_USER = os.environ["EMAIL_HOST_USER"]
+EMAIL_HOST_PASSWORD = os.environ["EMAIL_HOST_PASSWORD"]
+EMAIL_PORT = os.environ["EMAIL_PORT"]
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
