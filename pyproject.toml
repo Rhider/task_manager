@@ -16,6 +16,8 @@ drf-yasg = "^1.21.7"
 freezegun = "^1.4.0"
 factory-boy = "^3.3.0"
 coveralls = "^4.0.1"
+rollbar = "^1.0.0"
+newrelic = "^9.13.0"
 django-storages = "^1.14.4"
 boto3 = "^1.35.5"
 
