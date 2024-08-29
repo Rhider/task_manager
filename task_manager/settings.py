@@ -142,5 +142,8 @@ UPLOAD_MAX_SIZES: dict[str, int] = {
     "avatar_picture": 1 * 1024 * 1024,
 }
 
-CELERY_BROKER_url = f"redis://{os.environ['REDIS_HOST']}:{os.environ['REDIS_PORT']}/0"
+CELERY_BROKER_URL = f"redis://{os.environ['REDIS_HOST']}:{os.environ['REDIS_PORT']}/0"
 CELERY_INCLUDE = ["task_manager.tasks.py"]
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+CELERY_TASK_TRACK_STARTED = True  
+CELERY_SEND_TASK_SENT_EVENT = True
