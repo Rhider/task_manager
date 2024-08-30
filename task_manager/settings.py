@@ -29,6 +29,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "task_manager.log_utils.LoggingMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -147,3 +148,29 @@ CELERY_INCLUDE = ["task_manager.tasks.py"]
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 CELERY_TASK_TRACK_STARTED = True  
 CELERY_SEND_TASK_SENT_EVENT = True
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "task_manager": {
+            "()": "task_manager.log_utils.RequestFormatter",
+            "format": (
+                "{asctime} {levelname} method={request.method} path={request.path_info} "
+                "view={view.__qualname__} user={user_id} remote={remote_addr} "
+                "request_time={request_time} {message}"
+            ),
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "formatter": "task_manager",
+            "class": "logging.StreamHandler",
+        }
+    },
+    "loggers": {
+        "django.server": {"level": "INFO", "handlers": ["console"]},
+    }
+}
