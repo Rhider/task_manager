@@ -66,3 +66,25 @@ services:
       - "5555:5555"
     depends_on:
       - redis
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    volumes:
+      - /app/node_modules
+      - ./client:/app:cached
+      - frontend:/app/build
+      - ~/.bash_history:/root/.bash_history
+    ports:
+      - "3001:3000"
+    depends_on:
+      - api
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - PROXY_TARGET=api:8000
+      - CLIENT_ENV=dev
+    command: sh -c "yarn && yarn dev"
+
+volumes:
+  frontend:
