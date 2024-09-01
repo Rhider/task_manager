@@ -10,12 +10,14 @@ from drf_yasg import openapi
 
 from main.admin import task_manager_admin_site
 from main.views import (
+    AsyncJobViewSet,
     TagViewSet,
     TaskTagsViewSet,
     TaskViewSet,
     UserTasksViewSet,
     UserViewSet,
     CurrentUserViewSet,
+    CountdownJobViewSet,
 )
 from main.services.single_resource import BulkRouter
 
@@ -50,6 +52,8 @@ tasks.register(
     parents_query_lookups=["task_id"],
 )
 router.register(r"current-user", CurrentUserViewSet, basename="current_user")
+router.register(r"countdown", CountdownJobViewSet, basename="countdown")
+router.register(r"jobs", AsyncJobViewSet, basename="jobs")
 
 
 urlpatterns = [

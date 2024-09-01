@@ -11,7 +11,9 @@ services:
       - 8000:8000
     depends_on:
       - db
-    environment: 
+      - celery
+      - redis
+    environment: &api-environment
       DJANGO_ENV: dev
       DJANGO_SECRET_KEY: secret_key
       DATABASE_NAME: postgres
@@ -25,7 +27,9 @@ services:
       EMAIL_HOST_USER: ${EMAIL_HOST_USER}
       EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
       EMAIL_PORT: 465
-      NEW_RELIC_CONFIG_FILE: newrelic.ini 
+      NEW_RELIC_CONFIG_FILE: newrelic.ini
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     command: newrelic-admin run-program python manage.py runserver 0.0.0.0:8000
 
   db:
@@ -35,4 +39,52 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
- 
+
+  celery:
+    build: .
+    command: celery --app=task_manager worker --loglevel=info
+    environment:
+      <<: *api-environment
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+
+  flower:
+    build: .
+    command: celery --app=task_manager --broker=redis://redis:6379/0 flower --port=5555
+    environment:
+      <<: *api-environment
+    volumes:
+      - .:/app
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    volumes:
+      - /app/node_modules
+      - ./client:/app:cached
+      - frontend:/app/build
+      - ~/.bash_history:/root/.bash_history
+    ports:
+      - "3001:3000"
+    depends_on:
+      - api
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - PROXY_TARGET=api:8000
+      - CLIENT_ENV=dev
+    command: sh -c "yarn && yarn dev"
+
+volumes:
+  frontend:
